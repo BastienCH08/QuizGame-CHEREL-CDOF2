@@ -1,6 +1,8 @@
 import sys
 import time
 import curses
+import random
+
 
 def quiz_progress_bar(stdscr, question, options, selected_option):
     stdscr.clear()
@@ -68,11 +70,13 @@ stdscr.keypad(True)
 score = 0
 total_questions = len(questions)
 
-for q in questions:
-    result = ask_question(stdscr, q["question"], q["options"], q["correct_option"])
+questions_to_ask=questions
+while len(questions_to_ask)!= 0:
+    num=random.choice(questions_to_ask)
+    result=ask_question(stdscr,num["question"],num["options"],num["correct_option"])
     if result:
-        score += 1
-
+        score +=1
+    questions_to_ask.remove(num)
 # Calculate the score on a scale of 100
 percentage_score = (score / total_questions) * 100
 
