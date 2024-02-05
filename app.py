@@ -1,12 +1,21 @@
-import sys
-import time
 import curses
+import time
 import random
 
+def draw_progress_bar(stdscr, time_left, total_time=10):
+    """Draws a progress bar showing the time left."""
+    bar_length = 20  # Length of the progress bar
+    progress_length = int((time_left / total_time) * bar_length)
 
-def quiz_progress_bar(stdscr, question, options, selected_option):
+    bar = '[' + '=' * progress_length + ' ' * (bar_length - progress_length) + ']'
+    stdscr.addstr(2, 0, f"Time left: {bar} {time_left:.1f}s\n\n")
+
+def quiz_progress_bar(stdscr, question, options, selected_option, time_left):
+    """Displays the quiz question, options, and the progress bar."""
     stdscr.clear()
-    stdscr.addstr(f"{question}\n")
+    stdscr.addstr(f"{question}\n\n")
+
+    draw_progress_bar(stdscr, time_left)
 
     for i, option in enumerate(options):
         highlight = i == selected_option
@@ -15,12 +24,25 @@ def quiz_progress_bar(stdscr, question, options, selected_option):
     stdscr.refresh()
 
 def ask_question(stdscr, question, options, correct_option):
+    """Asks a quiz question and returns True if the answer is correct, False if time is up."""
+    stdscr.nodelay(1)  # Set stdscr.getch() to non-blocking mode
     selected_option = 0
-    quiz_progress_bar(stdscr, question, options, selected_option)
+    time_limit = 10  # Time limit for each question in seconds
+    start_time = time.time()
 
     while True:
-        key = stdscr.getch()
+        time_left = time_limit - (time.time() - start_time)
+        quiz_progress_bar(stdscr, question, options, selected_option, time_left)
 
+        if time_left <= 0:
+            # Refresh the progress bar with 0 seconds left before displaying "Time's up"
+            quiz_progress_bar(stdscr, question, options, selected_option, 0)
+            stdscr.addstr("\nTime's up!")
+            stdscr.refresh()
+            time.sleep(2)
+            return False  # Return False if time is up
+
+        key = stdscr.getch()
         if key == curses.KEY_UP and selected_option > 0:
             selected_option -= 1
         elif key == curses.KEY_DOWN and selected_option < len(options) - 1:
@@ -28,10 +50,12 @@ def ask_question(stdscr, question, options, correct_option):
         elif key == 10:  # Enter key
             break
 
-        quiz_progress_bar(stdscr, question, options, selected_option)
         time.sleep(0.1)  # Adjust the sleep duration based on your preferences
 
     return selected_option == correct_option
+
+
+
 
 # Example usage in a quiz scenario
 questions = [
