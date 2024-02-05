@@ -41,4 +41,7 @@ We welcome contributions from the community! If you'd like to contribute to the 
     git push origin feature/your-feature-name
 6. Create a pull request from your forked repository to the original repository.
 7. Wait for your pull request to be reviewed and merged.
-## test
+   
+## License
+
+This project is licensed under the MIT License.
