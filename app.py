@@ -58,7 +58,7 @@ questions = [
     {
         "question": "What is the largest mammal on Earth?",
         "options": ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
-        "correct_option": 1,
+        # "correct_option": 1,
     },
     {
         "question": "What is the smallest planet in our solar system?",
